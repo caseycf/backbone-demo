@@ -42,7 +42,7 @@ body {
 	font-size: 0.8em;
 }
 
-.commentform {
+.commentform, .commentform.modal {
 	background-color: yellow;
 	border: 1px solid green;
 	color: green;

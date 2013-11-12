@@ -3,9 +3,11 @@
 	<head>
 		<title>Backbone demo</title>
 		<link rel="stylesheet" href="css/demo.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
 		
 		<!-- Base libraries -->
 		<script type="text/javascript" src="lib/jquery.js"></script>
+    <script type="text/javascript" src="lib/jquery.modal.js"></script>
 		<script type="text/javascript" src="lib/underscore.js"></script>
 		<script type="text/javascript" src="lib/json2.js"></script>
 		<script type="text/javascript" src="lib/backbone.js"></script>
@@ -48,7 +50,6 @@
 		</div>
 		<!-- Application init -->
 		<script type="text/javascript" charset="utf-8">
-      window.dispatcher = _.clone( Backbone.Events );
 			new App({
 				el: $('#application')
 			});

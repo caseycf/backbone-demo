@@ -38,8 +38,6 @@ var FormView = Backbone.View.extend(
 		initialize: function () {
 			this.model.on('change', this.updateFields, this);
 			this.model.on('destroy', this.remove, this);
-      window.dispatcher.on('newComment', this.newCommentHandler, this);
-      window.dispatcher.on('editComment', this.editCommentHandler, this);
 		},
 		
 		/**
@@ -99,30 +97,6 @@ var FormView = Backbone.View.extend(
     },
 
 		/**
-		* Handler for new comment cancel trigger, same as cancel but fires the 
-    * newCommentReady event
-		* Cleans up form view from DOM
-		* @returns {Boolean} Returns false to stop propagation
-		*/
-    newCommentHandler: function(){
-      this.confirmedRemove();
-      window.dispatcher.trigger('newCommentReady');
-      return false;
-    },
-
-		/**
-		* Handler for new comment cancel trigger, same as cancel but fires the 
-    * newCommentReady event
-		* Cleans up form view from DOM
-		* @returns {Boolean} Returns false to stop propagation
-		*/
-    editCommentHandler: function () {
-      this.confirmedRemove();
-      window.dispatcher.trigger('editCommentReady');
-      return false;
-    },
-		
-		/**
 		 * Update view if the model changes, helps keep two edit forms for the same model in sync
 		 * @returns {Boolean} Returns false to stop propagation
 		 */
@@ -155,9 +129,9 @@ var FormView = Backbone.View.extend(
 			// unsubscribe from all model events with this context
 			this.model.off(null, null, this);
       
-			// unsubscribe from all dispatcher events with this context
-			window.dispatcher.off(null, null, this);
-			
+      // close modal
+      $.modal.close();
+
 			// delete container form DOM
 			this.$el.remove();
 			
