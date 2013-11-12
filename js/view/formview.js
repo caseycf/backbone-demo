@@ -75,6 +75,9 @@ var FormView = Backbone.View.extend(
 				text: text
 			});
 
+      // store the previous author name in sessionStorage
+      $.sessionStorage.setItem('lastCommentAuthor', author);
+
 			// set an id if model was a new instance
 			// note: this is usually done automatically when items are stored in an API
 			if (this.model.isNew()) {

@@ -32,7 +32,9 @@ var NewButtonView = Backbone.View.extend(
 		 * @returns {Boolean} Returns false to stop propagation
 		 */
 		createComment: function () {
-			var comment = new CommentModel({});
+			var comment = new CommentModel({
+        author: $.sessionStorage.getItem('lastCommentAuthor')
+      });
 			// render form view right after new button
 			var formview = new FormView({model: comment});
 			this.$el.after(formview.render().$el);
