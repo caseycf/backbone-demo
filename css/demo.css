@@ -54,3 +54,8 @@ body {
 .commentform textarea, .commentform input {
 	width: 350px;
 }
+
+.commentform .commenterror{
+	color: red;
+	font-size: 0.8em;
+}

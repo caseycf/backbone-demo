@@ -38,6 +38,7 @@ var FormView = Backbone.View.extend(
 		initialize: function () {
 			this.model.on('change', this.updateFields, this);
 			this.model.on('destroy', this.remove, this);
+			this.model.on('error', this.showError, this);
 		},
 		
 		/**
@@ -60,12 +61,20 @@ var FormView = Backbone.View.extend(
 		 * @returns {Boolean} Returns false to stop propagation
 		 */
 		submit: function () {
+		  var author = this.$el.find('.author').val();
+			var text = this.$el.find('.text').val();
+      // a little hack to validate the model since backbone validation
+      // is kind of meh. also triggers validation error event
+      if (!this.model._validate({author: author, text: text}, {validate: true})){
+        return false;
+      }
+
 			// set values from form on model
 			this.model.set({
-				author: this.$el.find('.author').val(),
-				text: this.$el.find('.text').val()
+				author: author,
+				text: text
 			});
-			
+
 			// set an id if model was a new instance
 			// note: this is usually done automatically when items are stored in an API
 			if (this.model.isNew()) {
@@ -87,13 +96,16 @@ var FormView = Backbone.View.extend(
 		*/
 		cancel: function () {
 			// clean up form, prompting to save if modal has changed or is unsaved
-      this.confirmedRemove();
-			return false;
-		},
-    
-    confirmedRemove: function(){
       var confirmed = this.dirty() ? confirm("You have unsaved changes. Are you sure?") : true;
       if (confirmed) this.remove();
+			return false;
+		},
+
+    /**
+     * Show the error message upon error
+     */ 
+    showError: function (model, error) {
+      this.$el.find('.commenterror').empty().text( error ).fadeIn();
     },
 
 		/**

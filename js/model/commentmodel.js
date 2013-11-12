@@ -17,10 +17,18 @@ var CommentModel = Backbone.Model.extend(
 			if (this.has('text') && this.get('text').length > 0) {
 				this.set('text', this.get('text').split('').reverse().join(''));
 			}
-		}
+		},
 
-    //validate: function() {
-      //return !this.hasEmptyTextOrAuthor();
-    //}
+		/**
+		 * Validate the comment model
+     * @returns error message if the model is invalid 
+		 */
+    validate: function( attrs, options ) {
+      var hasEmptyFields = _.some([attrs['author'], attrs['text']], function(val){
+        return (typeof val === 'undefined' || _.isEmpty(val.trim()));
+      });
+      if (hasEmptyFields)
+        return "You must include both an author and comment body.";
+    }
 	}
 );
