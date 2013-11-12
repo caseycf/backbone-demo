@@ -48,6 +48,7 @@
 		</div>
 		<!-- Application init -->
 		<script type="text/javascript" charset="utf-8">
+      window.dispatcher = _.clone( Backbone.Events );
 			new App({
 				el: $('#application')
 			});

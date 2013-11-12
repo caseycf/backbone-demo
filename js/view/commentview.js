@@ -68,6 +68,21 @@ var CommentView = Backbone.View.extend(
 		 * @returns {Boolean} Returns false to stop propagation
 		 */
 		edit: function () {
+      // Unsubscribe any existing new comment handlers
+      window.dispatcher.off('editCommentReady');
+
+      // trigger a global edit comment event and add listener if there are
+      // existing comment forms open or else just open the form
+      if ( $('.commentform').length > 0 ){
+        window.dispatcher.on('editCommentReady', this.finishEditComment, this);
+        window.dispatcher.trigger('editComment');
+      } else {
+        this.finishEditComment();
+      }
+      return false;
+    },
+
+    finishEditComment: function () {
 			// create new FormView instance to edit the comment
 			var formview = new FormView({model: this.model});
 			

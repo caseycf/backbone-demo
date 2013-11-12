@@ -34,6 +34,7 @@ var RandomButtonView = Backbone.View.extend(
 			var i;
 			for (i = 0; i < 5; i++) {
 				this.collection.add(new CommentModel({
+          id: Math.floor(Math.random() * 1000),
 					text: 'Random comment ' + Math.floor(Math.random() * 100),
 					author: 'serif'
 				}));

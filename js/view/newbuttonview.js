@@ -27,14 +27,31 @@ var NewButtonView = Backbone.View.extend(
 		},
 		
 		/**
-		 * Click event handler that first creates a new empty comment model, and assigns the model to a FormView instance.
+		 * Click event handler that first 
 		 * FormView will handle internally new comment creation and existing comment editing.
 		 * @returns {Boolean} Returns false to stop propagation
 		 */
 		createComment: function () {
+      // Unsubscribe any existing new comment handlers
+      window.dispatcher.off('newCommentReady');
+
+      // trigger a global new comment event and add listener if there are
+      // existing comment forms open or else just open the form
+      if ( $('.commentform').length > 0 ){
+        window.dispatcher.on('newCommentReady', this.finishCreateComment, this);
+        window.dispatcher.trigger('newComment');
+      } else {
+        this.finishCreateComment();
+      }
+      return false;
+    },
+
+    /** 
+     * Handler for the newCommentReady event. Creates a new empty comment model, and assigns the model to a FormView instance. 
+     */
+    finishCreateComment: function () {
 			// create new comment model
 			var comment = new CommentModel({});
-		
 			// render form view right after new button
 			var formview = new FormView({model: comment});
 			this.$el.after(formview.render().$el);
@@ -52,7 +69,7 @@ var NewButtonView = Backbone.View.extend(
 		 */
 		handleFormSuccess: function (model) {
 			this.collection.add(model);
-		}
-	
+		},
+
 	}
 );

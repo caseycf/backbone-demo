@@ -18,5 +18,9 @@ var CommentModel = Backbone.Model.extend(
 				this.set('text', this.get('text').split('').reverse().join(''));
 			}
 		}
+
+    //validate: function() {
+      //return !this.hasEmptyTextOrAuthor();
+    //}
 	}
 );

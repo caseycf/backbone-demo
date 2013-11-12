@@ -31,13 +31,15 @@ var FormView = Backbone.View.extend(
 			'click .submit': 'submit',
 			'click .cancel': 'cancel'
 		},
-		
+
 		/**
-		 * View init method, subscribing to model events
+		 * View init method, subscribing to model and events
 		 */
 		initialize: function () {
 			this.model.on('change', this.updateFields, this);
 			this.model.on('destroy', this.remove, this);
+      window.dispatcher.on('newComment', this.newCommentHandler, this);
+      window.dispatcher.on('editComment', this.editCommentHandler, this);
 		},
 		
 		/**
@@ -86,10 +88,39 @@ var FormView = Backbone.View.extend(
 		* @returns {Boolean} Returns false to stop propagation
 		*/
 		cancel: function () {
-			// clean up form
-			this.remove();
+			// clean up form, prompting to save if modal has changed or is unsaved
+      this.confirmedRemove();
 			return false;
 		},
+    
+    confirmedRemove: function(){
+      var confirmed = this.dirty() ? confirm("You have unsaved changes. Are you sure?") : true;
+      if (confirmed) this.remove();
+    },
+
+		/**
+		* Handler for new comment cancel trigger, same as cancel but fires the 
+    * newCommentReady event
+		* Cleans up form view from DOM
+		* @returns {Boolean} Returns false to stop propagation
+		*/
+    newCommentHandler: function(){
+      this.confirmedRemove();
+      window.dispatcher.trigger('newCommentReady');
+      return false;
+    },
+
+		/**
+		* Handler for new comment cancel trigger, same as cancel but fires the 
+    * newCommentReady event
+		* Cleans up form view from DOM
+		* @returns {Boolean} Returns false to stop propagation
+		*/
+    editCommentHandler: function () {
+      this.confirmedRemove();
+      window.dispatcher.trigger('editCommentReady');
+      return false;
+    },
 		
 		/**
 		 * Update view if the model changes, helps keep two edit forms for the same model in sync
@@ -100,6 +131,22 @@ var FormView = Backbone.View.extend(
 			this.$el.find('.text').val(this.model.get('text'));
 			return false;
 		},
+
+    /**
+     * Set the form as 'dirty' if out of sync with the associated model properties
+		 * @returns {Boolean} Returns false to stop propagation
+     */
+    dirty: function () {
+			var	text = this.$el.find('.text').val();
+			var author = this.$el.find('.author').val();
+      
+      // Set the form as dirty if the model is out of sync with it
+      if( !this.model.isNew()
+          && ( !_.isEqual(this.model.get('text'), text) 
+          || !_.isEqual(this.model.get('author'), author))) return true; 
+
+      return false;
+    },
 		
 		/**
 		 * Override the default view remove method with custom actions
@@ -107,6 +154,9 @@ var FormView = Backbone.View.extend(
 		remove: function () {
 			// unsubscribe from all model events with this context
 			this.model.off(null, null, this);
+      
+			// unsubscribe from all dispatcher events with this context
+			window.dispatcher.off(null, null, this);
 			
 			// delete container form DOM
 			this.$el.remove();
